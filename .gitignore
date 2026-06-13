@@ -1,0 +1,21 @@
+# Node
+node_modules/
+
+# Expo
+.expo/
+
+# Logs
+*.log
+
+# Ambiente
+.env
+
+# VSCode
+.vscode/
+
+# Build
+dist/
+build/
+
+# Sistema
+.DS_Store
