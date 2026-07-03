@@ -1,31 +1,42 @@
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
-import { api } from "../services/Api";
+import { View, Text, ScrollView } from "react-native";
+import CardLocal from "../components/CardLocal";
+import api from "../services/Api";
 
 export default function HomeScreen() {
   const [locais, setLocais] = useState([]);
 
   useEffect(() => {
-    api.get("/locais")
-      .then((response) => {
+    async function carregarLocais() {
+      try {
+        const response = await api.get("/locais");
         setLocais(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.log(error);
-      });
+      }
+    }
+
+    carregarLocais();
   }, []);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {locais.map((local: any) => (
-        <Text key={local.id}>{local.nome}</Text>
+    <ScrollView style={{ padding: 20 }}>
+      <Text
+        style={{
+          fontSize: 24,
+          fontWeight: "bold",
+          marginBottom: 20,
+        }}
+      >
+        Turismo Caparaó
+      </Text>
+
+      {locais.map((local) => (
+     <CardLocal
+    key={local.id}
+    local={local}
+  />
       ))}
-    </View>
+    </ScrollView>
   );
 }
