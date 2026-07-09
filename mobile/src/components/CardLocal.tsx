@@ -1,72 +1,35 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text } from "react-native";
 import { router } from "expo-router";
-
-interface Local {
-  id: number;
-  nome: string;
-  cidade: string;
-  descricao: string;
-  avaliacao: number;
-  imagem: string;
-  latitude: number;
-  longitude: number;
-}
+import { Local } from "../types/Local";
 
 interface Props {
   local: Local;
 }
 
 export default function CardLocal({ local }: Props) {
+  function abrirDetalhes() {
+    // Guarda de segurança: nunca navega com um id vazio/undefined,
+    // que era exatamente o que gerava a URL /locais/undefined no backend.
+    if (!local?.id) {
+      console.warn("CardLocal: local sem ID válido, navegação cancelada.");
+      return;
+    }
+    router.push(`/detalhes/${local.id}`);
+  }
+
   return (
-    <Pressable
-      onPress={() => router.push(`/detalhes/${local.id}`)}
-      style={{
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 12,
-        padding: 12,
-        marginBottom: 15,
-        backgroundColor: "#fff",
-      }}
-    >
-      {local.imagem && (
+    <Pressable onPress={abrirDetalhes} style={{ marginBottom: 20 }}>
+      {local.imagem ? (
         <Image
           source={{ uri: local.imagem }}
-          style={{
-            width: "100%",
-            height: 180,
-            borderRadius: 10,
-            marginBottom: 10,
-          }}
+          style={{ width: "100%", height: 180, borderRadius: 10, marginBottom: 10 }}
           resizeMode="cover"
         />
-      )}
+      ) : null}
 
-      <Text
-        style={{
-          fontSize: 22,
-          fontWeight: "bold",
-        }}
-      >
-        {local.nome}
-      </Text>
-
-      <Text
-        style={{
-          color: "#666",
-          marginTop: 4,
-        }}
-      >
-        📍 {local.cidade}
-      </Text>
-
-      <Text
-        style={{
-          marginTop: 6,
-        }}
-      >
-        ⭐ {local.avaliacao}
-      </Text>
+      <Text style={{ fontSize: 22, fontWeight: "bold" }}>{local.nome}</Text>
+      <Text style={{ color: "#666", marginTop: 4 }}>📍 {local.cidade}</Text>
+      <Text style={{ marginTop: 6 }}>⭐ {local.avaliacao}</Text>
     </Pressable>
   );
 }

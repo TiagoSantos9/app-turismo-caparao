@@ -1,42 +1,20 @@
-import { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
-import CardLocal from "../components/CardLocal";
-import api from "../services/Api";
+import ListaLocais from "../components/ListaLocais";
+import { useLocais } from "../hooks/useLocais";
+import { buscarLocais } from "../services/locaisService";
 
 export default function HomeScreen() {
-  const [locais, setLocais] = useState([]);
-
-  useEffect(() => {
-    async function carregarLocais() {
-      try {
-        const response = await api.get("/locais");
-        setLocais(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    carregarLocais();
-  }, []);
+  const { locais, carregando, erro } = useLocais(
+    buscarLocais,
+    "Não foi possível carregar os locais."
+  );
 
   return (
-    <ScrollView style={{ padding: 20 }}>
-      <Text
-        style={{
-          fontSize: 24,
-          fontWeight: "bold",
-          marginBottom: 20,
-        }}
-      >
-        Turismo Caparaó
-      </Text>
-
-      {locais.map((local) => (
-     <CardLocal
-    key={local.id}
-    local={local}
-  />
-      ))}
-    </ScrollView>
+    <ListaLocais
+      titulo="Turismo Caparaó"
+      locais={locais}
+      carregando={carregando}
+      erro={erro}
+      mensagemVazio="Nenhum local encontrado."
+    />
   );
 }

@@ -1,14 +1,9 @@
-const express = require("express");
-const cors = require("cors");
+const app = require("./app");
+const { PORT, HOST } = require("./config/env");
 
-const app = express();
 
-app.use(cors());
-app.use(express.json());
+require("./config/db");
 
-const locaisRoutes = require("./routes/locais");
-app.use("/locais", locaisRoutes);
-
-app.listen(3000, () => {
-  console.log("Servidor rodando na porta 3000");
+app.listen(PORT, HOST, () => {
+  console.log(`Servidor rodando em http://${HOST}:${PORT}`);
 });
