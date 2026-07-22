@@ -1,21 +1,21 @@
-import { ScrollView, Text } from "react-native";
+import { FlatList, Text, StyleSheet } from "react-native";
 import { Local } from "../types/Local";
 import CardLocal from "./CardLocal";
 import EstadoCarregando from "./EstadoCarregando";
+import { colors, spacing, typography } from "../theme";
 
 interface Props {
-  titulo: string;
   locais: Local[];
   carregando: boolean;
   erro: string | null;
   mensagemVazio?: string;
 }
 
-// Componente compartilhado pela Home e pelas 4 telas de categoria.
-// Antes esse JSX (título + lista + estados de loading/erro/vazio)
-// estava copiado e colado em 5 arquivos diferentes, quase idênticos.
+// Componente compartilhado pela Home e pelas 4 telas de categoria — só
+// renderiza a LISTA em si (título/busca/ícones ficam nas telas, que têm
+// layouts diferentes entre si). Usa FlatList em vez de .map dentro de
+// ScrollView: melhor desempenho com listas que podem crescer bastante.
 export default function ListaLocais({
-  titulo,
   locais,
   carregando,
   erro,
@@ -26,20 +26,36 @@ export default function ListaLocais({
   }
 
   return (
-    <ScrollView style={{ padding: 20 }}>
-      <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>
-        {titulo}
-      </Text>
-
-      {erro && <Text style={{ color: "red", marginBottom: 10 }}>{erro}</Text>}
-
-      {locais.length === 0 && !erro && (
-        <Text style={{ color: "#666" }}>{mensagemVazio}</Text>
-      )}
-
-      {locais.map((local) => (
-        <CardLocal key={local.id} local={local} />
-      ))}
-    </ScrollView>
+    <FlatList
+      data={locais}
+      keyExtractor={(item) => String(item.id)}
+      renderItem={({ item }) => <CardLocal local={item} />}
+      contentContainerStyle={styles.conteudo}
+      ListHeaderComponent={
+        erro ? <Text style={styles.erro}>{erro}</Text> : null
+      }
+      ListEmptyComponent={
+        !erro ? <Text style={styles.vazio}>{mensagemVazio}</Text> : null
+      }
+      showsVerticalScrollIndicator={false}
+    />
   );
 }
+
+const styles = StyleSheet.create({
+  conteudo: {
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xxl,
+    flexGrow: 1,
+  },
+  erro: {
+    ...typography.corpo,
+    color: colors.texto.sobreGradiente,
+    marginBottom: spacing.sm,
+  },
+  vazio: {
+    ...typography.corpo,
+    color: colors.texto.sobreGradienteSecundario,
+  },
+});

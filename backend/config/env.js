@@ -1,6 +1,8 @@
 require("dotenv").config();
 
-
+// Centraliza a leitura e validação das variáveis de ambiente.
+// Antes, db.js e server.js liam process.env diretamente e de forma
+// duplicada. Agora só existe UM lugar que sabe o nome das variáveis.
 const obrigatorias = ["DB_HOST", "DB_USER", "DB_NAME"];
 const faltando = obrigatorias.filter((chave) => !process.env[chave]);
 
